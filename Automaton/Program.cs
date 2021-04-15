@@ -8,6 +8,11 @@ namespace Automaton
 {
     class Program
     {
+
+        /// <summary>
+        /// The machine settings are stored in a file called input.json
+        /// </summary>
+        /// <returns></returns>
         static MachineSettings GetMachineSettings()
         {
             var input = File.ReadAllText("input.json");
@@ -15,11 +20,20 @@ namespace Automaton
             return machineSettings;
         }
 
+        /// <summary>
+        /// Some of the stats are read from the input file and are displayed as part of the output in the console 
+        /// </summary>
+        /// <param name="machineSettings"></param>
         static void DisplayStats(MachineSettings machineSettings)
         {
             Console.WriteLine($"Input {machineSettings.Input}");
         }
 
+
+        /// <summary>
+        /// Starting point to the program
+        /// </summary>
+        /// <param name="args"></param>
         static void Main(string[] args)
         {
             List<Position> positions = new List<Position>();
@@ -39,6 +53,11 @@ namespace Automaton
             JudgeInput(positions.Last());
         }
 
+
+        /// <summary>
+        /// Test the final state and determine its state
+        /// </summary>
+        /// <param name="position"></param>
         static void JudgeInput(Position position)
         {
             Console.WriteLine();
@@ -50,12 +69,24 @@ namespace Automaton
                 Console.WriteLine("Automaton rejects input");
         }
 
+
+        /// <summary>
+        /// This is a transition point for the app.  This method allows for expandability. 
+        /// </summary>
+        /// <param name="position"></param>
+        /// <returns></returns>
         static Position ApplyRule(Position position)
         {
             var ratedPosition = RatePosition(position);
             return FindNextState(ratedPosition);
         }
 
+
+        /// <summary>
+        /// Test each state and store the acceptance value
+        /// </summary>
+        /// <param name="position"></param>
+        /// <returns></returns>
         static Position RatePosition(Position position)
         {
             var machineSettings = GetMachineSettings();
@@ -67,6 +98,11 @@ namespace Automaton
             return position;
         }
 
+        /// <summary>
+        /// the next state is determined by the input.json file.  Use that to expand its rules
+        /// </summary>
+        /// <param name="position"></param>
+        /// <returns></returns>
         static Position FindNextState(Position position)
         {
             var machineSettings = GetMachineSettings();
@@ -77,8 +113,11 @@ namespace Automaton
 
             foreach (var currentState in stateChange)
             {
-                if (int.Parse(currentState[0])== position.State)
+                if (int.Parse(currentState[0]) == position.State)
+                {
                     position.State = int.Parse(currentState[1]);
+                    break;
+                }
             }
             var p = RatePosition(position);
             Console.WriteLine($"Character {p.Input} transitions to state {p.State}");
