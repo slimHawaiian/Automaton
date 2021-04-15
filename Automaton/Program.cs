@@ -17,8 +17,6 @@ namespace Automaton
 
         static void DisplayStats(MachineSettings machineSettings)
         {
-            Console.WriteLine($"Accept State {machineSettings.AcceptState}");
-            Console.WriteLine($"Alphabet {machineSettings.Alphabet}");
             Console.WriteLine($"Input {machineSettings.Input}");
         }
 
@@ -35,21 +33,18 @@ namespace Automaton
             for (var i = 0;i < inputStringArray.Count();i++)
             {
                 p.Input = inputStringArray[i];
-                if(i > 0)
-                    p.State = p.State < machineSettings.States.Count()? p.State + 1 : p.State;
                 p = ApplyRule(p);
                 positions.Add(p);
             }
-            JudgeInput(positions);
+            JudgeInput(positions.Last());
         }
 
-        static void JudgeInput(List<Position> positions)
+        static void JudgeInput(Position position)
         {
-            var hasAcceptedPositions = positions.Where(x => x.Acceptance == Acceptance.accepted);
             Console.WriteLine();
             Console.WriteLine();
 
-            if (hasAcceptedPositions != null)
+            if (position.Acceptance == Acceptance.accepted)
                 Console.WriteLine("Automaton accepts input");
             else
                 Console.WriteLine("Automaton rejects input");
@@ -58,7 +53,6 @@ namespace Automaton
         static Position ApplyRule(Position position)
         {
             var ratedPosition = RatePosition(position);
-            Console.WriteLine($"Character {position.Input} at state {position.State} is {ratedPosition.Acceptance}");
             return FindNextState(ratedPosition);
         }
 
@@ -83,11 +77,12 @@ namespace Automaton
 
             foreach (var currentState in stateChange)
             {
-                if (currentState[0].Equals(position.State))
+                if (int.Parse(currentState[0])== position.State)
                     position.State = int.Parse(currentState[1]);
             }
-           
-            return position;
+            var p = RatePosition(position);
+            Console.WriteLine($"Character {p.Input} transitions to state {p.State}");
+            return p;
         }
     }
 }
